@@ -816,14 +816,22 @@ local function open_trade_gui(player, colony)
     end
     list.add{ type = "label", caption = table.concat(cost_parts) }
   end
+
+  player.opened = root
 end
 
 script.on_event(defines.events.on_gui_opened, function(e)
   local player = game.get_player(e.player_index)
   if not player then return end
 
+  local element = e.element
+  if element and element.valid and element.name == "sbt_trade_root" then
+    return
+  end
+
   local ent = e.entity
   if not (ent and ent.valid and ent.name == BOARD_NAME) then
+    close_trade_gui(player)
     return
   end
 
@@ -834,6 +842,15 @@ script.on_event(defines.events.on_gui_opened, function(e)
 
   refresh_board_icons(colony)
   open_trade_gui(player, colony)
+end)
+
+script.on_event(defines.events.on_gui_closed, function(e)
+  local player = game.get_player(e.player_index)
+  if not player then return end
+
+  local element = e.element
+  if not (element and element.valid and element.name == "sbt_trade_root") then return end
+  close_trade_gui(player)
 end)
 
 script.on_event(defines.events.on_gui_checked_state_changed, function(e)
