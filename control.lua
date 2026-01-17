@@ -824,6 +824,11 @@ script.on_event(defines.events.on_gui_opened, function(e)
   local player = game.get_player(e.player_index)
   if not player then return end
 
+  local element = e.element
+  if element and element.valid and element.name == "sbt_trade_root" then
+    return
+  end
+
   local ent = e.entity
   if not (ent and ent.valid and ent.name == BOARD_NAME) then
     close_trade_gui(player)
