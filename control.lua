@@ -768,7 +768,6 @@ local function open_trade_gui(player, colony)
     caption = "Handel - " .. cname
   }
   root.auto_center = true
-  player.opened = root
 
   local header = root.add{ type = "flow", direction = "horizontal" }
   header.add{ type = "label", caption = "Kolonia: " .. cname }
@@ -817,6 +816,8 @@ local function open_trade_gui(player, colony)
     end
     list.add{ type = "label", caption = table.concat(cost_parts) }
   end
+
+  player.opened = root
 end
 
 script.on_event(defines.events.on_gui_opened, function(e)
@@ -842,12 +843,9 @@ script.on_event(defines.events.on_gui_closed, function(e)
   local player = game.get_player(e.player_index)
   if not player then return end
 
-  local root = player.gui.screen.sbt_trade_root
-  if not (root and root.valid) then return end
-
-  if e.element == root or e.gui_type == defines.gui_type.custom then
-    close_trade_gui(player)
-  end
+  local element = e.element
+  if not (element and element.valid and element.name == "sbt_trade_root") then return end
+  close_trade_gui(player)
 end)
 
 script.on_event(defines.events.on_gui_checked_state_changed, function(e)
